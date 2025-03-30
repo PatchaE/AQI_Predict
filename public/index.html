@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+
+    <script src="jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="jquery.datetimepicker.min.css"/>
+    <script src="jquery.datetimepicker.full.min.js"></script>
+    <title>Air Quality Index</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="lc_select.js"></script>
+    <link href="themes/light.css" rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <div class="section">
+        <div>
+            <h2>Real Time Air Quality</h2>
+            <p id="currentTime"></p> <!-- เวลาอัปเดตอัตโนมัติ -->
+        </div>
+        
+    <div class="aqi-card">
+        <div class="aqi-header">
+            <div class="aqi-info">
+                <span class="aqi-label">AQI</span>
+                <span class="aqi-value">0</span>
+            </div>
+            <div class="aqi-status">
+                <div style="margin-bottom: 10px;">
+                    <span>Air Quality is</span>
+                </div>
+                <div class="status-box">Poor</div>
+            </div>
+        </div>
+        <div class="aqi-scale">
+            <span style="color:white;">Good</span>
+            <span style="color: white;">Moderate</span>
+            <span style="color: white;">Poor</span>
+            <span style="color: white;">Unhealthy</span>
+            <span style="color: white;">Severe</span>
+            <span style="color: white;">Hazardous</span>
+        </div>
+        <div class="aqi-bar">
+            <div class="bar"></div>
+            <div class="aqi-marker" id="aqi-marker"></div>
+            <!-- <div class="indicator" style="left: 90%;"></div> -->
+        </div>
+        
+        <div class="aqi-values">
+            <span>0</span> <span>50</span> <span>100</span> <span>150</span> <span>200</span> <span>300</span> <span>301+</span>
+        </div>
+    </div>
+
+        <div class="info_graph">
+            <div style="display: flex;flex-direction: row;justify-content: space-between;align-items: center;">
+                <h3>Reports : &nbsp;</h3>
+                <input id="datetimepicker" style="font-size: 16px; height: 30px; text-align: center;" readonly type="text"/>
+            </div>
+            
+            <form>
+                <select name="simple" data-placeholder="Select sensor .." style="height: 30px;">
+                    <option value="Temperature">🌡️Temperature</option>
+                    <option value="Humidity">💧Humidity</option>
+                    <option value="PM2_5">😷PM 2.5</option>
+                    <option value="PM10">🤧PM 10</option>
+                    <option value="O3">🌍O₃</option>
+                    <option value="CO">🏭CO</option>
+                    <option value="NO2">🏭NO₂</option>
+                    <option value="SO2">☠️SO₂</option>
+                </select>
+            </form>
+        </div>
+        <div>
+            <br>
+            <div id="chartContainer" style="height: 300px; width: 100%;"></div>       
+            <div class="info">
+                <h3>Current Data</h3>
+                <div id="sensorshow">
+                    <div class="box">
+                        <span style="font-size: 35px;">🌡️</span>
+                        <div>
+                            <!-- แก้ไขเป็น js เพิ่มมาแทน แล้ว ใส่ค่า id ตามที่เลือก -->
+                            <div class="value">Temperature</div>
+                            <div class="value" id="TempMeesage" style="margin-top: 10px;">0 °C</div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Prediction -->
+    <div class="section">
+        <div>
+            <h2>Prediction Air Quality</h2>
+            <p id="currentTime_forecast">-</p>
+        </div>
+        
+    <div class="aqi-card">
+        <div class="aqi-header">
+            <div class="aqi-info">
+                <span class="aqi-label">AQI</span>
+                <span class="aqi-value_predict">0</span>
+            </div>
+            <div class="aqi-status">
+                <div style="margin-bottom: 10px;">
+                    <span>Air Quality is</span>
+                </div>
+                <div class="status-box_predict">Poor</div>
+            </div>
+        </div>
+        <div class="aqi-scale">
+            <span style="color:white;">Good</span>
+            <span style="color: white;">Moderate</span>
+            <span style="color: white;">Poor</span>
+            <span style="color: white;">Unhealthy</span>
+            <span style="color: white;">Severe</span>
+            <span style="color: white;">Hazardous</span>
+        </div>
+        <div class="aqi-bar">
+            <div class="bar"></div>
+            <div class="aqi-marker" id="aqi-marker_Predict"></div>
+            <!-- <div class="indicator" style="left: 90%;"></div> -->
+        </div>
+        
+        <div class="aqi-values">
+            <span>0</span> <span>50</span> <span>100</span> <span>150</span> <span>200</span> <span>300</span> <span>301+</span>
+        </div>
+    </div>
+
+        <div class="info_graph">
+            <div style="display: flex;flex-direction: row;justify-content: space-between;align-items: center;">
+                <h3>Reports : &nbsp;</h3>
+                <input id="datetimepicker_predict" style="font-size: 16px; height: 30px; text-align: center;" readonly type="text"/>
+            </div>
+            
+            <form>
+                <select name="simple_predict" data-placeholder="Select sensor .." style="height: 30px;">
+                    <option value="Temperature">🌡️Temperature</option>
+                    <option value="Humidity">💧Humidity</option>
+                    <option value="PM2_5">😷PM 2.5</option>
+                    <option value="PM10">🤧PM 10</option>
+                    <option value="O3">🌍O₃</option>
+                    <option value="CO">🏭CO</option>
+                    <option value="NO2">🏭NO₂</option>
+                    <option value="SO2">☠️SO₂</option>
+                </select>
+            </form>
+        </div>
+        <div>
+            <br>
+            <div id="chartContainer_predict" style="height: 300px; width: 100%;"></div>       
+            <div class="info">
+                <h3>Predict Data</h3>
+                <div id="sensorshow_predict">
+                    <div class="box">
+                        <span style="font-size: 35px;">🌡️</span>
+                        <div>
+                            <!-- แก้ไขเป็น js เพิ่มมาแทน แล้ว ใส่ค่า id ตามที่เลือก -->
+                            <div class="value">Temperature</div>
+                            <div class="value" id="TempMeesage_forecast" style="margin-top: 10px;">28.2 °C</div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+<script type="text/javascript">
+    let Temp_Current = 0;
+    let Hum_Current = 0;
+    let PM2_5_Current = 0;
+    let PM10_Current = 0;
+    let Ozone_Current = 0;
+    let Carbon_Current = 0;
+    let Nitro_Current = 0;
+    let Sulfur_Current = 0;
+    let dataArray = [];
+    let dataArray_forecast = [];
+    let aqiValue = 100; // Set your AQI value here
+    let aqiPredict_Value = 80; // Set your AQI Predict value here
+    let datepick = '';
+    ////////////////////////RealTime/////////////
+
+try
+{
+    var chart = new CanvasJS.Chart("chartContainer", {
+		title:{
+			text: "",
+            fontSize: 20,
+            fontColor:"black",
+            fontWeight:"normal",              
+		},
+        zoomEnabled:false,
+		data: [              
+		{
+			// Change type to "doughnut", "line", "splineArea", etc.
+			type: "line",
+            showInLegend: false,
+            name: "Height(m)",
+            color: "purple",
+			dataPoints: [],
+            lineThickness : 3
+		}
+		]
+	    });
+	    chart.render();        
+}
+catch{}
+$("#datetimepicker").datetimepicker({
+    timepicker:false,
+    inline:false,
+    closeOnDateSelect:true,
+    value : '',
+    format:'m/d/Y',
+    ////////////////////////////////////////////////
+    onSelectDate:function(ct,$i){
+        ////////// Data base Return dataPoints //////////////
+        datepick = new Date(ct).toLocaleDateString('en-CA');
+        datepick = new Date(datepick).toISOString().split('T')[0];
+        //console.log(datepick);  
+        let date = datepick; // แปลงเป็น ปี-เดือน-วัน
+        document.querySelector("select[name=simple]").value = "";
+        chart.options.data[0].dataPoints = [];
+
+        fetch('/data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ date })  // ส่งข้อมูล date ในรูปแบบ JSON
+        })
+        .then(response => {
+        if (!response.ok) 
+        {
+            throw new Error('Network response was not ok');
+        }
+            return response.json();
+        })
+        .then(data => {
+            // แสดงข้อมูลใน console ในรูปแบบที่อ่านง่าย
+            //console.log('Response Data:', JSON.stringify(data));
+            dataArray = JSON.parse(JSON.stringify(data));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        chart.render(); // รีเฟรชกราฟ
+    }
+    /////////////////////////////////////////////////
+});
+try
+{
+    const select = document.querySelector('select[name=simple]');
+    new lc_select(select, {
+        wrap_width: '100%',
+        min_for_search: 0,
+        pre_placeh_opt: false,
+        on_change : function(new_value, target_field) {
+            
+            /////////// Loop  database insert //////////////
+            //console.log(new_value[0]);
+            ////////////////////////////////////////////////
+            chart.options.data[0].dataPoints = [];
+            try
+            {
+                const sensorshow = document.getElementById("sensorshow");
+                sensorshow.innerHTML = ``;
+                switch(new_value[0])
+                    {
+                        case "Temperature":
+                        sensorshow.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 35px;">🌡️</span>
+                            <div>
+                                <!-- แก้ไขเป็น js เพิ่มมาแทน แล้ว ใส่ค่า id ตามที่เลือก -->
+                                <div class="value">Temperature</div>
+                                <div class="value" id="TempMeesage" style="margin-top: 10px;">0 °C</div>
+                            </div>
+                        </div>  
+                        `
+                            break;
+                        case "Humidity":
+                        sensorshow.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">💧</span>
+                            <div>
+                                <div class="value">Humidity</div>
+                                <div class="value" id="HumMeesage" style="margin-top: 10px;">0 %</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "PM2_5":
+                        sensorshow.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">😷</span>
+                            <div>
+                                <div class="value">PM2.5</div>
+                                <div class="value" id="PM2_5Meesage" style="margin-top: 10px;">0 µg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "PM10":
+                        sensorshow.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">🤧</span>
+                            <div>
+                                <div class="value">PM10</div>
+                                <div class="value" id="PM10Meesage" style="margin-top: 10px;">0 µg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "O3":
+                        sensorshow.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">🌍</span>
+                            <div>
+                                <div class="value">O₃</div>
+                                <div class="value" id="OzoneMessage" style="margin-top: 10px;">0 mg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "CO":
+                        sensorshow.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">🏭</span>
+                            <div>
+                                <div class="value">CO</div>
+                                <div class="value" id="CarbonMessage" style="margin-top: 10px;">0 mg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "NO2": 
+                        sensorshow.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">🏭</span>
+                            <div>
+                                <div class="value">NO₂</div>
+                                <div class="value" id="NitroMessage" style="margin-top: 10px;">0 µg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "SO2": 
+                        sensorshow.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">☠️</span>
+                            <div>
+                                <div class="value">SO₂</div>
+                                <div class="value" id="SulfurMessage" style="margin-top: 10px;">0 µg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                    }
+                let CheckMinMax = 0.00;
+                let data_sensor = 0.00;
+                let minValueExist = false;
+                let maxValueExist = false;
+
+                for (let i = 0; i < dataArray.length; i++)
+                {
+                    if(new Date(dataArray[i].timestamp).toISOString().split('T')[0] 
+                    != new Date(datepick).toISOString().split('T')[0])
+                    {
+                        break;
+                    }
+                        
+                    switch(new_value[0])
+                    {
+                        case "Temperature": data_sensor = dataArray[i].Temp
+                        CheckMinMax = dataArray.map(item => item.Temp)
+                            break;
+                        case "Humidity": data_sensor = dataArray[i].Hum
+                        CheckMinMax = dataArray.map(item => item.Hum)
+                            break;
+                        case "PM2_5": data_sensor = dataArray[i].PM2_5
+                        CheckMinMax = dataArray.map(item => item.PM2_5)
+                            break;
+                        case "PM10": data_sensor = dataArray[i].PM10
+                        CheckMinMax = dataArray.map(item => item.PM10)
+                            break;
+                        case "O3": data_sensor = dataArray[i].Ozone
+                        CheckMinMax = dataArray.map(item => item.Ozone)
+                            break;
+                        case "CO": data_sensor = dataArray[i].Carbon
+                        CheckMinMax = dataArray.map(item => item.Carbon)
+                            break;
+                        case "NO2": data_sensor = dataArray[i].Nitro
+                        CheckMinMax = dataArray.map(item => item.Nitro)
+                            break;
+                        case "SO2": data_sensor = dataArray[i].Sulfur
+                        CheckMinMax = dataArray.map(item => item.Sulfur)
+                            break;
+                    }
+                    if(data_sensor == Math.min(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && minValueExist == 0)
+                    {
+                        minValueExist = true;
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         y: data_sensor,
+                         markerType: "cross",
+                         markerColor: "blue",
+                         markerSize: 10,
+                         //indexLabel : "lowest",
+                         toolTipContent : "Lowest Data : " + data_sensor }); // เพิ่มจุดข้อมูลใหม่
+                    }
+                    else if(data_sensor == Math.max(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && maxValueExist == 0)
+                    {
+                        maxValueExist = true;
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         y: data_sensor,
+                         markerType: "cross",
+                         markerColor: "red",
+                         markerSize: 10,
+                         //indexLabel : "lowest",
+                         toolTipContent : "Highest Data : " + data_sensor }); // เพิ่มจุดข้อมูลใหม่
+                    }
+                    else
+                    {
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         y: data_sensor }); // เพิ่มจุดข้อมูลใหม่
+                    }  
+                }
+            }
+            catch{}
+            chart.render(); // รีเฟรชกราฟ
+        }
+    });
+}catch{}
+
+
+    //////////////////////Predict///////////////
+try
+{
+    var chart_predict = new CanvasJS.Chart("chartContainer_predict", {
+		title:{
+			text: "",
+            fontSize: 20,
+            fontColor:"black",
+            fontWeight:"normal",              
+		},
+        zoomEnabled:false,
+		data: [              
+		{
+			// Change type to "doughnut", "line", "splineArea", etc.
+			type: "line",
+            showInLegend: false,
+            name: "Height(m)",
+            color: "purple",
+			dataPoints: [],
+            lineThickness : 3
+		}
+		]
+	    });
+	    chart_predict.render();        
+}
+catch{}
+
+$("#datetimepicker_predict").datetimepicker({
+    timepicker:false,
+    inline:false,
+    closeOnDateSelect:true,
+    value : '',
+    format:'m/d/Y',
+    ////////////////////////////////////////////////
+    onSelectDate:function(ct,$i){
+        ////////// Data base Return dataPoints //////////////
+        datepick = new Date(ct).toLocaleDateString('en-CA');
+        datepick = new Date(datepick).toISOString().split('T')[0];
+        //console.log(datepick);  
+        let date = datepick; // แปลงเป็น ปี-เดือน-วัน
+        document.querySelector("select[name=simple_predict]").value = "";
+        chart.options.data[0].dataPoints = [];
+        ////////// รอเปลี่ยน path //////////////////////
+        fetch('/data_predict', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ date })  // ส่งข้อมูล date ในรูปแบบ JSON
+        })
+        .then(response => {
+        if (!response.ok) 
+        {
+            throw new Error('Network response was not ok');
+        }
+            return response.json();
+        })
+        .then(data => {
+            // แสดงข้อมูลใน console ในรูปแบบที่อ่านง่าย
+            //console.log('Response Data:', JSON.stringify(data));
+            dataArray_predict = JSON.parse(JSON.stringify(data));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        chart_predict.render(); // รีเฟรชกราฟ
+    }
+    /////////////////////////////////////////////////
+});
+try
+{
+    const select_predict = document.querySelector('select[name=simple_predict]');
+    new lc_select(select_predict, {
+        wrap_width: '100%',
+        min_for_search: 0,
+        pre_placeh_opt: false,
+        on_change : function(new_value, target_field) {
+            
+            /////////// Loop  database insert //////////////
+            //console.log(new_value[0]);
+            ////////////////////////////////////////////////
+            chart_predict.options.data[0].dataPoints = [];
+            try
+            {
+                const sensorshow_predict = document.getElementById("sensorshow_predict");
+                sensorshow_predict.innerHTML = ``;
+                switch(new_value[0])
+                    {
+                        case "Temperature":
+                        sensorshow_predict.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 35px;">🌡️</span>
+                            <div>
+                                <!-- แก้ไขเป็น js เพิ่มมาแทน แล้ว ใส่ค่า id ตามที่เลือก -->
+                                <div class="value">Temperature</div>
+                                <div class="value" id="TempMeesage_forecast" style="margin-top: 10px;">0 °C</div>
+                            </div>
+                        </div>  
+                        `
+                            break;
+                        case "Humidity":
+                        sensorshow_predict.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">💧</span>
+                            <div>
+                                <div class="value">Humidity</div>
+                                <div class="value" id="HumMeesage_forecast" style="margin-top: 10px;">0 %</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "PM2_5":
+                        sensorshow_predict.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">😷</span>
+                            <div>
+                                <div class="value">PM2.5</div>
+                                <div class="value" id="PM2_5Meesage_forecast" style="margin-top: 10px;">0 µg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "PM10":
+                        sensorshow_predict.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">🤧</span>
+                            <div>
+                                <div class="value">PM10</div>
+                                <div class="value" id="PM10Meesage_forecast" style="margin-top: 10px;">0 µg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "O3":
+                        sensorshow_predict.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">🌍</span>
+                            <div>
+                                <div class="value">O₃</div>
+                                <div class="value" id="OzoneMessage_forecast" style="margin-top: 10px;">0 mg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "CO":
+                        sensorshow_predict.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">🏭</span>
+                            <div>
+                                <div class="value">CO</div>
+                                <div class="value" id="CarbonMessage_forecast" style="margin-top: 10px;">0 mg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "NO2": 
+                        sensorshow_predict.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">🏭</span>
+                            <div>
+                                <div class="value">NO₂</div>
+                                <div class="value" id="NitroMessage_forecast" style="margin-top: 10px;">0 µg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                        case "SO2": 
+                        sensorshow_predict.innerHTML += `
+                        <div class="box">
+                            <span style="font-size: 36px;">☠️</span>
+                            <div>
+                                <div class="value">SO₂</div>
+                                <div class="value" id="SulfurMessage_forecast" style="margin-top: 10px;">0 µg/m³</div>
+                            </div>
+                        </div> 
+                        `
+                            break;
+                    }
+                let CheckMinMax = 0.00;
+                let data_sensor = 0.00;
+                let minValueExist = false;
+                let maxValueExist = false;
+
+                for (let i = 0; i < dataArray_predict.length; i++)
+                {
+                    if(new Date(dataArray_predict[i].timestamp).toISOString().split('T')[0] 
+                    != new Date(datepick).toISOString().split('T')[0])
+                    {
+                        break;
+                    }
+                        
+                    switch(new_value[0])
+                    {
+                        case "Temperature": data_sensor = dataArray_predict[i].Temp
+                        CheckMinMax = dataArray_predict.map(item => item.Temp)
+                            break;
+                        case "Humidity": data_sensor = dataArray_predict[i].Hum
+                        CheckMinMax = dataArray_predict.map(item => item.Hum)
+                            break;
+                        case "PM2_5": data_sensor = dataArray_predict[i].PM2_5
+                        CheckMinMax = dataArray_predict.map(item => item.PM2_5)
+                            break;
+                        case "PM10": data_sensor = dataArray_predict[i].PM10
+                        CheckMinMax = dataArray_predict.map(item => item.PM10)
+                            break;
+                        case "O3": data_sensor = dataArray_predict[i].Ozone
+                        CheckMinMax = dataArray_predict.map(item => item.Ozone)
+                            break;
+                        case "CO": data_sensor = dataArray_predict[i].Carbon
+                        CheckMinMax = dataArray_predict.map(item => item.Carbon)
+                            break;
+                        case "NO2": data_sensor = dataArray_predict[i].Nitro
+                        CheckMinMax = dataArray_predict.map(item => item.Nitro)
+                            break;
+                        case "SO2": data_sensor = dataArray_predict[i].Sulfur
+                        CheckMinMax = dataArray_predict.map(item => item.Sulfur)
+                            break;
+                    }
+                    if(data_sensor == Math.min(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && minValueExist == 0)
+                    {
+                        minValueExist = true;
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         y: data_sensor,
+                         markerType: "cross",
+                         markerColor: "blue",
+                         markerSize: 10,
+                         //indexLabel : "lowest",
+                         toolTipContent : "Lowest Data : " + data_sensor }); // เพิ่มจุดข้อมูลใหม่
+                    }
+                    else if(data_sensor == Math.max(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && maxValueExist == 0)
+                    {
+                        maxValueExist = true;
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         y: data_sensor,
+                         markerType: "cross",
+                         markerColor: "red",
+                         markerSize: 10,
+                         //indexLabel : "lowest",
+                         toolTipContent : "Highest Data : " + data_sensor }); // เพิ่มจุดข้อมูลใหม่
+                    }
+                    else
+                    {
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         y: data_sensor }); // เพิ่มจุดข้อมูลใหม่
+                    }  
+                }
+            }
+            catch{}
+            chart_predict.render(); // รีเฟรชกราฟ
+        }
+    });
+}catch{}
+    
+    
+    //////////////////////////////////////////////
+    function updateTime() 
+    {
+        let now = new Date();
+        document.getElementById("currentTime").textContent = now.toLocaleString("en-CA", {
+        weekday: 'long', month: 'long', day: 'numeric', year: "numeric" , hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+    }
+    function updateDateTime_forecase() ////////// Edit Here forecast //////////////////
+    {
+        let now = new Date();
+        now.setHours(now.getHours() + 1);
+        document.getElementById("currentTime_forecast").textContent = now.toLocaleString("en-US", {
+        weekday: 'long', month: 'long', day: 'numeric', year: "numeric" , hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });  
+        // document.getElementById("TempMeesage_forecast").innerHTML = Temp_Current + " °C";
+        // document.getElementById("HumMeesage_forecast").innerHTML = Hum_Current + " %";    
+        // document.getElementById("PM2_5Meesage_forecast").innerHTML = "PM2.5 <br><br>" + PM2_5_Current + " µg/m³";
+        // document.getElementById("PM10Meesage_forecast").innerHTML = "PM10 <br><br>" + PM10_Current + " µg/m³";    
+        // document.getElementById("OzoneMessage_forecast").innerHTML = "O₃ <br><br>" + Ozone_Current + " mg/m³";
+        // document.getElementById("CarbonMessage_forecast").innerHTML = "CO <br><br>" + Carbon_Current + " mg/m³"; 
+        // document.getElementById("NitroMessage_forecast").innerHTML = "NO₂ <br><br>" + Nitro_Current + " µg/m³";
+        // document.getElementById("SulfurMessage_forecast").innerHTML = "SO₂ <br><br>" + Sulfur_Current + " µg/m³"; 
+
+    }   
+    function updateEveryHour() 
+    {
+        updateTime();
+        updateDateTime_forecase();
+        setInterval(updateTime, 1000);
+        setInterval(updateDateTime_forecase, 3600000); // Update every 1 hour (3600000 ms)
+    }        
+    var broker = {
+        hostname: "broker.emqx.io",
+        port: 8084,
+        clientId: "web_" + Math.random().toString(16).substr(2, 8)
+    };
+
+    var topic = "IQA_Test/+";
+
+    // MQTT client instance
+    var client = new Paho.MQTT.Client(broker.hostname, broker.port, broker.clientId);
+
+    function onConnect() {
+        console.log("Connected to MQTT broker");
+        client.subscribe(topic);
+        //client.subscribe('IQA_Test/Hum');
+        console.log("Subscribed to topic: " + topic);
+    }
+
+    function onFailure(message) {
+        console.log("Connection to MQTT broker failed: " + message.errorMessage);
+    } 
+
+    function onMessageArrived(message) 
+    {
+        
+        //console.log("Topic: " + message.destinationName);
+        if(message.destinationName == "IQA_Test/Temp" 
+        && document.querySelector("select[name=simple]").value == "Temperature")
+        {
+             Temp_Current = message.payloadString;
+             document.getElementById("TempMeesage").innerText = Temp_Current + " °C";
+        }  
+        else if(message.destinationName == "IQA_Test/Hum"
+        && document.querySelector("select[name=simple]").value == "Humidity")
+        {
+            Hum_Current = message.payloadString;
+            document.getElementById("HumMeesage").innerHTML = Hum_Current + " %";
+        }
+        else if(message.destinationName == "IQA_Test/PM2_5"
+        && document.querySelector("select[name=simple]").value == "PM2_5")
+        {
+            PM2_5_Current = message.payloadString;
+            document.getElementById("PM2_5Meesage").innerHTML = PM2_5_Current + " µg/m³";
+        }  
+        else if(message.destinationName == "IQA_Test/PM10"
+        && document.querySelector("select[name=simple]").value == "PM10")
+        {
+            PM10_Current = message.payloadString;
+            document.getElementById("PM10Meesage").innerHTML = PM10_Current + " µg/m³";
+        }
+        else if(message.destinationName == "IQA_Test/Ozone"
+        && document.querySelector("select[name=simple]").value == "O3")
+        {
+            Ozone_Current = message.payloadString;
+            document.getElementById("OzoneMessage").innerHTML = Ozone_Current + " mg/m³";
+        }  
+        else if(message.destinationName == "IQA_Test/Carbon"
+        && document.querySelector("select[name=simple]").value == "CO")
+        {
+            Carbon_Current = message.payloadString;
+            document.getElementById("CarbonMessage").innerHTML = Carbon_Current + " mg/m³";
+        }
+        if(message.destinationName == "IQA_Test/Nitro"
+        && document.querySelector("select[name=simple]").value == "NO2")
+        {
+            Nitro_Current = message.payloadString;
+            document.getElementById("NitroMessage").innerHTML = Nitro_Current + " µg/m³";
+        }  
+        else if(message.destinationName == "IQA_Test/Sulfur"
+        && document.querySelector("select[name=simple]").value == "SO2")
+        {
+            Sulfur_Current = message.payloadString;
+            document.getElementById("SulfurMessage").innerHTML = Sulfur_Current + " µg/m³";
+        }
+    }
+
+        // Set callback functions
+        client.onConnectionLost = onFailure;
+        client.onMessageArrived = onMessageArrived;
+
+        // Connect to MQTT broker
+        client.connect({
+            onSuccess: onConnect,
+            onFailure: onFailure,
+            useSSL: true,
+            userName: "",
+            password: ""
+        });
+
+        // อัปเดตเวลาทุกวินาที
+        
+    updateEveryHour();
+    /////////////////////////// Actual //////////////////////
+    
+    let maxAqi = 320;
+    const marker = document.getElementById('aqi-marker');
+    const containerWidth = document.querySelector('.aqi-bar').offsetWidth;
+
+    const markerPosition = (aqiValue / maxAqi) * containerWidth;
+    marker.style.left = `${markerPosition}px`;
+    document.querySelectorAll(".aqi-value").forEach(el => el.textContent = aqiValue);
+    if(aqiValue >= 0 && aqiValue <= 50) // สีเขียว
+    {
+        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Good");
+        document.querySelector(".status-box").style.color = "lawngreen";
+    }
+    else if(aqiValue >= 51 && aqiValue <= 100) // สีเหลือง
+    {
+        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Moderate");
+        document.querySelector(".status-box").style.color = "yellow";
+    }
+    else if(aqiValue >= 100 && aqiValue <= 150) // สีส้ม
+    {
+        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Poor");
+        document.querySelector(".status-box").style.color = "orange";
+    }
+    else if(aqiValue >= 151 && aqiValue <= 200) // สีแดง
+    {
+        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Unhealthy");
+        document.querySelector(".status-box").style.color = "red";
+    }
+    else if(aqiValue >= 201 && aqiValue <= 300) // สีม่วง
+    {
+        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Servere");
+        document.querySelector(".status-box").style.color = "purple";
+    }
+    else // สีน้ำตาล
+    {
+        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Hazardous");
+        document.querySelector(".status-box").style.color = "brown";
+    }
+    /////////////////////////////////////////////////////////
+    /////////////////////////// Prediction //////////////////////
+    
+    let maxAqi_Predict = 320;
+    const marker_Predict = document.getElementById('aqi-marker_Predict');
+    const containerWidth_Predict = document.querySelector('.aqi-bar').offsetWidth;
+
+    const markerPosition_Predict = (aqiPredict_Value / maxAqi_Predict) * containerWidth_Predict;
+    marker_Predict.style.left = `${markerPosition_Predict}px`;
+    document.querySelectorAll(".aqi-value_predict").forEach(el => el.textContent = aqiPredict_Value);
+    if(aqiPredict_Value >= 0 && aqiPredict_Value <= 50) // สีเขียว
+    {
+        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Good");
+        document.querySelector(".status-box_predict").style.color = "lawngreen";
+    }
+    else if(aqiPredict_Value >= 51 && aqiPredict_Value <= 100) // สีเหลือง
+    {
+        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Moderate");
+        document.querySelector(".status-box_predict").style.color = "yellow";
+    }
+    else if(aqiPredict_Value >= 100 && aqiPredict_Value <= 150) // สีส้ม
+    {
+        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Poor");
+        document.querySelector(".status-box_predict").style.color = "orange";
+    }
+    else if(aqiPredict_Value >= 151 && aqiPredict_Value <= 200) // สีแดง
+    {
+        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Unhealthy");
+        document.querySelector(".status-box_predict").style.color = "red";
+    }
+    else if(aqiPredict_Value >= 201 && aqiPredict_Value <= 300) // สีม่วง
+    {
+        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Servere");
+        document.querySelector(".status-box_predict").style.color = "purple";
+    }
+    else // สีน้ำตาล
+    {
+        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Hazardous");
+        document.querySelector(".status-box_predict").style.color = "brown";
+    }
+    /////////////////////////////////////////////////////////
+</script>
