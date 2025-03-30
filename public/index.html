@@ -177,6 +177,15 @@
     let Carbon_Current = 0;
     let Nitro_Current = 0;
     let Sulfur_Current = 0;
+    //////////////////////////
+    let Temp_Predict = 23.8;
+    let Hum_Predict = 60;
+    let PM2_5_Predict = 8;
+    let PM10_Predict = 10;
+    let Ozone_Predict = 1;
+    let Carbon_Predict = 4;
+    let Nitro_Predict = 3;
+    let Sulfur_Predict = 2
     let dataArray = [];
     let dataArray_forecast = [];
     let aqiValue = 100; // Set your AQI value here
@@ -534,7 +543,7 @@ try
                             <div>
                                 <!-- แก้ไขเป็น js เพิ่มมาแทน แล้ว ใส่ค่า id ตามที่เลือก -->
                                 <div class="value">Temperature</div>
-                                <div class="value" id="TempMeesage_forecast" style="margin-top: 10px;">0 °C</div>
+                                <div class="value" id="TempMeesage_forecast" style="margin-top: 10px;">${Temp_Predict} °C</div>
                             </div>
                         </div>  
                         `
@@ -545,7 +554,7 @@ try
                             <span style="font-size: 36px;">💧</span>
                             <div>
                                 <div class="value">Humidity</div>
-                                <div class="value" id="HumMeesage_forecast" style="margin-top: 10px;">0 %</div>
+                                <div class="value" id="HumMeesage_forecast" style="margin-top: 10px;">${Hum_Predict} %</div>
                             </div>
                         </div> 
                         `
@@ -556,7 +565,7 @@ try
                             <span style="font-size: 36px;">😷</span>
                             <div>
                                 <div class="value">PM2.5</div>
-                                <div class="value" id="PM2_5Meesage_forecast" style="margin-top: 10px;">0 µg/m³</div>
+                                <div class="value" id="PM2_5Meesage_forecast" style="margin-top: 10px;">${PM2_5_Predict} µg/m³</div>
                             </div>
                         </div> 
                         `
@@ -567,7 +576,7 @@ try
                             <span style="font-size: 36px;">🤧</span>
                             <div>
                                 <div class="value">PM10</div>
-                                <div class="value" id="PM10Meesage_forecast" style="margin-top: 10px;">0 µg/m³</div>
+                                <div class="value" id="PM10Meesage_forecast" style="margin-top: 10px;">${PM10_Predict} µg/m³</div>
                             </div>
                         </div> 
                         `
@@ -578,7 +587,7 @@ try
                             <span style="font-size: 36px;">🌍</span>
                             <div>
                                 <div class="value">O₃</div>
-                                <div class="value" id="OzoneMessage_forecast" style="margin-top: 10px;">0 mg/m³</div>
+                                <div class="value" id="OzoneMessage_forecast" style="margin-top: 10px;">${Ozone_Predict} mg/m³</div>
                             </div>
                         </div> 
                         `
@@ -589,7 +598,7 @@ try
                             <span style="font-size: 36px;">🏭</span>
                             <div>
                                 <div class="value">CO</div>
-                                <div class="value" id="CarbonMessage_forecast" style="margin-top: 10px;">0 mg/m³</div>
+                                <div class="value" id="CarbonMessage_forecast" style="margin-top: 10px;">${Carbon_Predict} mg/m³</div>
                             </div>
                         </div> 
                         `
@@ -600,7 +609,7 @@ try
                             <span style="font-size: 36px;">🏭</span>
                             <div>
                                 <div class="value">NO₂</div>
-                                <div class="value" id="NitroMessage_forecast" style="margin-top: 10px;">0 µg/m³</div>
+                                <div class="value" id="NitroMessage_forecast" style="margin-top: 10px;">${Nitro_Predict}0 µg/m³</div>
                             </div>
                         </div> 
                         `
@@ -611,7 +620,7 @@ try
                             <span style="font-size: 36px;">☠️</span>
                             <div>
                                 <div class="value">SO₂</div>
-                                <div class="value" id="SulfurMessage_forecast" style="margin-top: 10px;">0 µg/m³</div>
+                                <div class="value" id="SulfurMessage_forecast" style="margin-top: 10px;">${Sulfur_Predict} µg/m³</div>
                             </div>
                         </div> 
                         `
