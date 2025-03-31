@@ -54,8 +54,7 @@
 
         <div class="info_graph">
             <div style="display: flex;flex-direction: row;justify-content: space-between;align-items: center;">
-                <h3>Reports : &nbsp;</h3>
-                <input id="datetimepicker" style="font-size: 16px; height: 30px; text-align: center;" readonly type="text"/>
+                <input id="datetimepicker" placeholder="Select Date" style="font-size: 16px; height: 30px; text-align: center;" readonly type="text"/>
             </div>
             
             <form>
@@ -75,7 +74,7 @@
             <br>
             <div id="chartContainer" style="height: 300px; width: 100%;"></div>       
             <div class="info">
-                <h3>Current Data</h3>
+                <h3>Real-Time Data</h3>
                 <div id="sensorshow">
                     <div class="box">
                         <span style="font-size: 35px;">🌡️</span>
@@ -130,8 +129,7 @@
 
         <div class="info_graph">
             <div style="display: flex;flex-direction: row;justify-content: space-between;align-items: center;">
-                <h3>Reports : &nbsp;</h3>
-                <input id="datetimepicker_predict" style="font-size: 16px; height: 30px; text-align: center;" readonly type="text"/>
+                <input id="datetimepicker_predict" placeholder="Select Date" style="font-size: 16px; height: 30px; text-align: center;" readonly type="text"/>
             </div>
             
             <form>
@@ -151,7 +149,7 @@
             <br>
             <div id="chartContainer_predict" style="height: 300px; width: 100%;"></div>       
             <div class="info">
-                <h3>Predict Data</h3>
+                <h3>Latest Prediction</h3>
                 <div id="sensorshow_predict">
                     <div class="box">
                         <span style="font-size: 35px;">🌡️</span>
@@ -188,7 +186,7 @@
     let Sulfur_Predict = 2
     let dataArray = [];
     let dataArray_forecast = [];
-    let aqiValue = 100; // Set your AQI value here
+    let aqiValue = 50; // Set your AQI value here
     let aqiPredict_Value = 80; // Set your AQI Predict value here
     let datepick = '';
     ////////////////////////RealTime/////////////
@@ -266,7 +264,7 @@ try
     new lc_select(select, {
         wrap_width: '100%',
         min_for_search: 0,
-        pre_placeh_opt: false,
+        pre_placeh_opt: true,
         on_change : function(new_value, target_field) {
             
             /////////// Loop  database insert //////////////
@@ -523,7 +521,7 @@ try
     new lc_select(select_predict, {
         wrap_width: '100%',
         min_for_search: 0,
-        pre_placeh_opt: false,
+        pre_placeh_opt: true,
         on_change : function(new_value, target_field) {
             
             /////////// Loop  database insert //////////////
@@ -837,36 +835,60 @@ try
 
     const markerPosition = (aqiValue / maxAqi) * containerWidth;
     marker.style.left = `${markerPosition}px`;
-    document.querySelectorAll(".aqi-value").forEach(el => el.textContent = aqiValue);
+    
     if(aqiValue >= 0 && aqiValue <= 50) // สีเขียว
     {
         document.querySelectorAll(".status-box").forEach(el => el.textContent = "Good");
         document.querySelector(".status-box").style.color = "lawngreen";
+        document.querySelectorAll(".aqi-value").forEach(el => {
+            el.textContent = aqiValue;
+            el.style.color = "lawngreen"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else if(aqiValue >= 51 && aqiValue <= 100) // สีเหลือง
     {
         document.querySelectorAll(".status-box").forEach(el => el.textContent = "Moderate");
         document.querySelector(".status-box").style.color = "yellow";
+        document.querySelectorAll(".aqi-value").forEach(el => {
+            el.textContent = aqiValue;
+            el.style.color = "yellow"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else if(aqiValue >= 100 && aqiValue <= 150) // สีส้ม
     {
         document.querySelectorAll(".status-box").forEach(el => el.textContent = "Poor");
         document.querySelector(".status-box").style.color = "orange";
+        document.querySelectorAll(".aqi-value").forEach(el => {
+            el.textContent = aqiValue;
+            el.style.color = "orange"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else if(aqiValue >= 151 && aqiValue <= 200) // สีแดง
     {
         document.querySelectorAll(".status-box").forEach(el => el.textContent = "Unhealthy");
         document.querySelector(".status-box").style.color = "red";
+        document.querySelectorAll(".aqi-value").forEach(el => {
+            el.textContent = aqiValue;
+            el.style.color = "red"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else if(aqiValue >= 201 && aqiValue <= 300) // สีม่วง
     {
         document.querySelectorAll(".status-box").forEach(el => el.textContent = "Servere");
         document.querySelector(".status-box").style.color = "purple";
+        document.querySelectorAll(".aqi-value").forEach(el => {
+            el.textContent = aqiValue;
+            el.style.color = "purple"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else // สีน้ำตาล
     {
         document.querySelectorAll(".status-box").forEach(el => el.textContent = "Hazardous");
         document.querySelector(".status-box").style.color = "brown";
+        document.querySelectorAll(".aqi-value").forEach(el => {
+            el.textContent = aqiValue;
+            el.style.color = "brown"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     /////////////////////////////////////////////////////////
     /////////////////////////// Prediction //////////////////////
@@ -877,36 +899,61 @@ try
 
     const markerPosition_Predict = (aqiPredict_Value / maxAqi_Predict) * containerWidth_Predict;
     marker_Predict.style.left = `${markerPosition_Predict}px`;
-    document.querySelectorAll(".aqi-value_predict").forEach(el => el.textContent = aqiPredict_Value);
+
+    
     if(aqiPredict_Value >= 0 && aqiPredict_Value <= 50) // สีเขียว
     {
         document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Good");
         document.querySelector(".status-box_predict").style.color = "lawngreen";
+        document.querySelectorAll(".aqi-value_predict").forEach(el => {
+            el.textContent = aqiPredict_Value;
+            el.style.color = "lawngreen"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else if(aqiPredict_Value >= 51 && aqiPredict_Value <= 100) // สีเหลือง
     {
         document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Moderate");
         document.querySelector(".status-box_predict").style.color = "yellow";
+        document.querySelectorAll(".aqi-value_predict").forEach(el => {
+            el.textContent = aqiPredict_Value;
+            el.style.color = "yellow"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else if(aqiPredict_Value >= 100 && aqiPredict_Value <= 150) // สีส้ม
     {
         document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Poor");
         document.querySelector(".status-box_predict").style.color = "orange";
+        document.querySelectorAll(".aqi-value_predict").forEach(el => {
+            el.textContent = aqiPredict_Value;
+            el.style.color = "orange"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else if(aqiPredict_Value >= 151 && aqiPredict_Value <= 200) // สีแดง
     {
         document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Unhealthy");
         document.querySelector(".status-box_predict").style.color = "red";
+        document.querySelectorAll(".aqi-value_predict").forEach(el => {
+            el.textContent = aqiPredict_Value;
+            el.style.color = "red"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else if(aqiPredict_Value >= 201 && aqiPredict_Value <= 300) // สีม่วง
     {
         document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Servere");
         document.querySelector(".status-box_predict").style.color = "purple";
+        document.querySelectorAll(".aqi-value_predict").forEach(el => {
+            el.textContent = aqiPredict_Value;
+            el.style.color = "purple"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     else // สีน้ำตาล
     {
         document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Hazardous");
         document.querySelector(".status-box_predict").style.color = "brown";
+        document.querySelectorAll(".aqi-value_predict").forEach(el => {
+            el.textContent = aqiPredict_Value;
+            el.style.color = "brown"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+        });
     }
     /////////////////////////////////////////////////////////
 </script>

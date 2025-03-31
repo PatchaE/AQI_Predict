@@ -7,6 +7,11 @@ body {
     align-items: center;
     height: 100vh;
 }
+input::placeholder {
+    font-weight: normal;
+    opacity: 1;
+    font-size: 14px;
+  }
 .aqi-card {
     background: linear-gradient(to bottom,  #131524, #ac742b);
     padding: 30px;

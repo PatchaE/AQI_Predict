@@ -305,7 +305,7 @@
             
             div.classList.add("lcslt-wrap", fname_class);
             div.innerHTML = '<input type="text" name="'+ fname_class +'-tit" tabindex="'+ tabindex +'" class="lcslt-tabindex-trick" />' +
-                            '<div class="lcslt '+ fname_class +' '+ multi_class +' '+ disabled_class +'" data-placeh="'+ placeh +'"></div>';
+                            '<div class="lcslt '+ fname_class +' '+ multi_class +' '+ disabled_class +`" data-placeh="${placeh}"></div>`;
 
             el.parentNode.insertBefore(div, el);
             div.appendChild(el);
@@ -341,12 +341,12 @@
                     }
                 });
                 
-                if(no_selected) {
+                if(no_selected) { // เพิ่มช่องว่าง data-placeholder
                     const ph_opt = document.createElement('option');
                     ph_opt.setAttribute('data-lcslt-placeh', 1);
                     ph_opt.setAttribute('value', "");
-                    ph_opt.style.display = 'none';
-                    ph_opt.innerHTML = placeh;
+                    ph_opt.style.display = 'none';                   
+                    ph_opt.innerHTML = "&emsp;&emsp;&emsp;" + placeh;
                     ph_opt.selected = true;
 
                     el.insertBefore(ph_opt, el.firstChild);  

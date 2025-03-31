@@ -7,6 +7,11 @@
     background: #fafafa;
     border-radius: 2px;
     transition: all .25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 35px; /* กำหนดความสูงให้เหมาะสม */
 }
 .lcslt:not(.lcslt-disabled):hover,
 .lcslt.lcslt_dd-open,
