@@ -187,7 +187,7 @@
     let dataArray = [];
     let dataArray_forecast = [];
     let aqiValue = 50; // Set your AQI value here
-    let aqiPredict_Value = 80; // Set your AQI Predict value here
+    let aqiPredict_Value = 180; // Set your AQI Predict value here
     let datepick = '';
     ////////////////////////RealTime/////////////
 
@@ -410,7 +410,7 @@ try
                     if(data_sensor == Math.min(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && minValueExist == 0)
                     {
                         minValueExist = true;
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en", 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-CA", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor,
                          markerType: "cross",
@@ -422,7 +422,7 @@ try
                     else if(data_sensor == Math.max(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && maxValueExist == 0)
                     {
                         maxValueExist = true;
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en", 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-CA", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor,
                          markerType: "cross",
@@ -433,7 +433,7 @@ try
                     }
                     else
                     {
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en", 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-CA", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor }); // เพิ่มจุดข้อมูลใหม่
                     }  
@@ -667,7 +667,7 @@ try
                     if(data_sensor == Math.min(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && minValueExist == 0)
                     {
                         minValueExist = true;
-                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en", 
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en-CA", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor,
                          markerType: "cross",
@@ -679,7 +679,7 @@ try
                     else if(data_sensor == Math.max(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && maxValueExist == 0)
                     {
                         maxValueExist = true;
-                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en", 
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en-CA", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor,
                          markerType: "cross",
@@ -690,7 +690,7 @@ try
                     }
                     else
                     {
-                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en", 
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en-CA", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor }); // เพิ่มจุดข้อมูลใหม่
                     }  
@@ -715,7 +715,7 @@ try
     {
         let now = new Date();
         now.setHours(now.getHours() + 1);
-        document.getElementById("currentTime_forecast").textContent = now.toLocaleString("en-US", {
+        document.getElementById("currentTime_forecast").textContent = now.toLocaleString("en-CA", {
         weekday: 'long', month: 'long', day: 'numeric', year: "numeric" , hour: '2-digit', minute: '2-digit', second: '2-digit'
         });  
         // document.getElementById("TempMeesage_forecast").innerHTML = Temp_Current + " °C";
