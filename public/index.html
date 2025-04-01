@@ -691,7 +691,7 @@ try
                     if(data_sensor == Math.min(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && minValueExist == 0)
                     {
                         minValueExist = true;
-                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en-CA", 
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("th-TH", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor,
                          markerType: "cross",
@@ -703,7 +703,7 @@ try
                     else if(data_sensor == Math.max(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && maxValueExist == 0)
                     {
                         maxValueExist = true;
-                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en-CA", 
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("th-TH", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor,
                          markerType: "cross",
@@ -714,7 +714,7 @@ try
                     }
                     else
                     {
-                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("en-CA", 
+                        chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("th-TH", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor }); // เพิ่มจุดข้อมูลใหม่
                     }  
