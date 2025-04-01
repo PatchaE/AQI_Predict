@@ -372,6 +372,30 @@ try
                 let minValueExist = false;
                 let maxValueExist = false;
 
+                let date = datepick; // แปลงเป็น ปี-เดือน-วัน
+
+                // fetch('/data', {
+                // method: 'POST',
+                // headers: {
+                //     'Content-Type': 'application/json'
+                // },
+                // body: JSON.stringify({ date })  // ส่งข้อมูล date ในรูปแบบ JSON
+                // })
+                // .then(response => {
+                // if (!response.ok) 
+                // {
+                //     throw new Error('Network response was not ok');
+                // }
+                //     return response.json();
+                // })
+                // .then(data => {
+                //     // แสดงข้อมูลใน console ในรูปแบบที่อ่านง่าย
+                //     //console.log('Response Data:', JSON.stringify(data));
+                //     dataArray = JSON.parse(JSON.stringify(data));
+                // })
+                // .catch(error => {
+                //     console.error('Error:', error);
+                // });        
                 for (let i = 0; i < dataArray.length; i++)
                 {
                     if(new Date(dataArray[i].timestamp).toISOString().split('T')[0] 
@@ -410,7 +434,7 @@ try
                     if(data_sensor == Math.min(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && minValueExist == 0)
                     {
                         minValueExist = true;
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-CA", 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("th-TH", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor,
                          markerType: "cross",
@@ -422,7 +446,7 @@ try
                     else if(data_sensor == Math.max(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && maxValueExist == 0)
                     {
                         maxValueExist = true;
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-CA", 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("th-TH", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor,
                          markerType: "cross",
@@ -433,7 +457,7 @@ try
                     }
                     else
                     {
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-CA", 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("th-TH", 
                          { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
                          y: data_sensor }); // เพิ่มจุดข้อมูลใหม่
                     }  
