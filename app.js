@@ -35,7 +35,7 @@ app.post('/data', async (req, res) => {
 app.post('/data_predict', async (req, res) => {
   try {
       const { date } = req.body; // รับค่าจาก Body
-      const result = await knex.select('*').from('sensor_data')
+      const result = await knex.select('*').from('sensor_data_predict')
       .where(knex.raw('DATE(timestamp) = ?', date));
       
       res.set('Content-Type', 'application/json');
