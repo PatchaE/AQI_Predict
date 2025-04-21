@@ -19,11 +19,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+app.post('/getAlldata_predict', async (req, res) => {
+  try {
+      
+      const { date } = req.body; // รับค่าจาก Body
+      const result = await knex.select('*')
+      .from('data_predict')
+      
+      res.set('Content-Type', 'application/json');
+      res.json(result);  // ส่งผลลัพธ์ไปยัง client
+  } catch (error) {
+      console.error('Error:', error);  // แสดงข้อผิดพลาดในคอนโซลของเซิร์ฟเวอร์
+      res.status(500).json({ error: error.message });
+  }
+});
 app.post('/data', async (req, res) => {
     try {
+        
         const { date } = req.body; // รับค่าจาก Body
-        const result = await knex.select('*').from('sensor_data')
-        .where(knex.raw('DATE(timestamp) = ?', date));
+        const result = await knex.select('*')
+        .from('sensor_data')
+        .whereRaw('DATE(`timestamp`) = ?', [date]);
         
         res.set('Content-Type', 'application/json');
         res.json(result);  // ส่งผลลัพธ์ไปยัง client
@@ -35,7 +51,7 @@ app.post('/data', async (req, res) => {
 app.post('/data_predict', async (req, res) => {
   try {
       const { date } = req.body; // รับค่าจาก Body
-      const result = await knex.select('*').from('sensor_data_predict')
+      const result = await knex.select('*').from('data_predict')
       .where(knex.raw('DATE(timestamp) = ?', date));
       
       res.set('Content-Type', 'application/json');

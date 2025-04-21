@@ -156,7 +156,7 @@
                         <div>
                             <!-- แก้ไขเป็น js เพิ่มมาแทน แล้ว ใส่ค่า id ตามที่เลือก -->
                             <div class="value">Temperature</div>
-                            <div class="value" id="TempMeesage_forecast" style="margin-top: 10px;">28.2 °C</div>
+                            <div class="value" id="TempMeesage_forecast" style="margin-top: 10px;">0 °C</div>
                         </div>
                     </div>  
                 </div>
@@ -176,21 +176,22 @@
     let Nitro_Current = 0;
     let Sulfur_Current = 0;
     //////////////////////////
-    let Temp_Predict = 23.8;
-    let Hum_Predict = 60;
-    let PM2_5_Predict = 8;
-    let PM10_Predict = 10;
-    let Ozone_Predict = 1;
-    let Carbon_Predict = 4;
-    let Nitro_Predict = 3;
-    let Sulfur_Predict = 2
+    let Temp_Predict = 0;
+    let Hum_Predict = 0;
+    let PM2_5_Predict = 0;
+    let PM10_Predict = 0;
+    let Ozone_Predict = 0;
+    let Carbon_Predict = 0;
+    let Nitro_Predict = 0;
+    let Sulfur_Predict = 0;
     let dataArray = [];
     let dataArray_predict = [];
     let aqiValue = 50; // Set your AQI value here
-    let aqiPredict_Value = 180; // Set your AQI Predict value here
+    let aqiPredict_Value = 50; // Set your AQI Predict value here
     let datepick = '';
     ////////////////////////RealTime/////////////
-
+    let maxAqi = 320;
+    let maxAqi_Predict = 320;
 try
 {
     var chart = new CanvasJS.Chart("chartContainer", {
@@ -394,6 +395,7 @@ try
                     // แสดงข้อมูลใน console ในรูปแบบที่อ่านง่าย
                     //console.log('Response Data:', JSON.stringify(data));
                     dataArray = JSON.parse(JSON.stringify(data));
+                    //console.log(dataArray);
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -409,36 +411,36 @@ try
                         
                     switch(new_value[0])
                     {
-                        case "Temperature": data_sensor = dataArray[i].Temp
-                        CheckMinMax = dataArray.map(item => item.Temp)
+                        case "Temperature": data_sensor = dataArray[i].temp
+                        CheckMinMax = dataArray.map(item => item.temp)
                             break;
-                        case "Humidity": data_sensor = dataArray[i].Hum
-                        CheckMinMax = dataArray.map(item => item.Hum)
+                        case "Humidity": data_sensor = dataArray[i].hum
+                        CheckMinMax = dataArray.map(item => item.hum)
                             break;
-                        case "PM2_5": data_sensor = dataArray[i].PM2_5
-                        CheckMinMax = dataArray.map(item => item.PM2_5)
+                        case "PM2_5": data_sensor = dataArray[i].pm2_5
+                        CheckMinMax = dataArray.map(item => item.pm2_5)
                             break;
-                        case "PM10": data_sensor = dataArray[i].PM10
-                        CheckMinMax = dataArray.map(item => item.PM10)
+                        case "PM10": data_sensor = dataArray[i].pm10
+                        CheckMinMax = dataArray.map(item => item.pm10)
                             break;
-                        case "O3": data_sensor = dataArray[i].Ozone
-                        CheckMinMax = dataArray.map(item => item.Ozone)
+                        case "O3": data_sensor = dataArray[i].ozone
+                        CheckMinMax = dataArray.map(item => item.ozone)
                             break;
-                        case "CO": data_sensor = dataArray[i].Carbon
-                        CheckMinMax = dataArray.map(item => item.Carbon)
+                        case "CO": data_sensor = dataArray[i].carbon
+                        CheckMinMax = dataArray.map(item => item.carbon)
                             break;
-                        case "NO2": data_sensor = dataArray[i].Nitro
-                        CheckMinMax = dataArray.map(item => item.Nitro)
+                        case "NO2": data_sensor = dataArray[i].nitro
+                        CheckMinMax = dataArray.map(item => item.nitro)
                             break;
-                        case "SO2": data_sensor = dataArray[i].Sulfur
-                        CheckMinMax = dataArray.map(item => item.Sulfur)
+                        case "SO2": data_sensor = dataArray[i].sulfur
+                        CheckMinMax = dataArray.map(item => item.sulfur)
                             break;
                     }
                     if(data_sensor == Math.min(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && minValueExist == 0)
                     {
                         minValueExist = true;
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("th-TH", 
-                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-US", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Bangkok'}), 
                          y: data_sensor,
                          markerType: "cross",
                          markerColor: "blue",
@@ -449,8 +451,8 @@ try
                     else if(data_sensor == Math.max(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && maxValueExist == 0)
                     {
                         maxValueExist = true;
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("th-TH", 
-                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-US", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Bangkok'}), 
                          y: data_sensor,
                          markerType: "cross",
                          markerColor: "red",
@@ -460,8 +462,8 @@ try
                     }
                     else
                     {
-                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("th-TH", 
-                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                        chart.options.data[0].dataPoints.push({ label: new Date(dataArray[i].timestamp).toLocaleString("en-US", 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Bangkok'}), 
                          y: data_sensor }); // เพิ่มจุดข้อมูลใหม่
                     }  
                 }
@@ -512,12 +514,18 @@ $("#datetimepicker_predict").datetimepicker({
     ////////////////////////////////////////////////
     onSelectDate:function(ct,$i){
         ////////// Data base Return dataPoints //////////////
-        datepick = new Date(ct).toLocaleDateString('en-CA');
-        datepick = new Date(datepick).toISOString().split('T')[0];
-        //console.log(datepick);  
-        let date = datepick; // แปลงเป็น ปี-เดือน-วัน
+        datepick = new Date(ct).toLocaleDateString('en-US');
+        datepick = new Date(datepick);
+        const year = datepick.getFullYear();
+        const month = String(datepick.getMonth() + 1).padStart(2, '0');
+        const day = String(datepick.getDate()).padStart(2, '0');
+
+        const formatted = `${year}-${month}-${day}`;
+        // console.log(formatted); // "2025-04-21"
+
+        let date = formatted; // แปลงเป็น ปี-เดือน-วัน
         document.querySelector("select[name=simple_predict]").value = "";
-        chart.options.data[0].dataPoints = [];
+        chart_predict.options.data[0].dataPoints = [];
         ////////// รอเปลี่ยน path //////////////////////
         fetch('/data_predict', {
         method: 'POST',
@@ -535,8 +543,8 @@ $("#datetimepicker_predict").datetimepicker({
         })
         .then(data => {
             // แสดงข้อมูลใน console ในรูปแบบที่อ่านง่าย
-            //console.log('Response Data:', JSON.stringify(data));
             dataArray_predict = JSON.parse(JSON.stringify(data));
+            console.log(dataArray_predict);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -658,7 +666,6 @@ try
                 let data_sensor = 0.00;
                 let minValueExist = false;
                 let maxValueExist = false;
-
                 for (let i = 0; i < dataArray_predict.length; i++)
                 {
                     if(new Date(dataArray_predict[i].timestamp).toISOString().split('T')[0] 
@@ -666,39 +673,39 @@ try
                     {
                         break;
                     }
-                        
+                    
                     switch(new_value[0])
                     {
-                        case "Temperature": data_sensor = dataArray_predict[i].Temp
-                        CheckMinMax = dataArray_predict.map(item => item.Temp)
+                        case "Temperature": data_sensor = dataArray_predict[i].predict_temp
+                        CheckMinMax = dataArray_predict.map(item => item.predict_temp)
                             break;
-                        case "Humidity": data_sensor = dataArray_predict[i].Hum
-                        CheckMinMax = dataArray_predict.map(item => item.Hum)
+                        case "Humidity": data_sensor = dataArray_predict[i].predict_hum
+                        CheckMinMax = dataArray_predict.map(item => item.predict_hum)
                             break;
-                        case "PM2_5": data_sensor = dataArray_predict[i].PM2_5
-                        CheckMinMax = dataArray_predict.map(item => item.PM2_5)
+                        case "PM2_5": data_sensor = dataArray_predict[i].predict_pm25
+                        CheckMinMax = dataArray_predict.map(item => item.predict_pm25)
                             break;
-                        case "PM10": data_sensor = dataArray_predict[i].PM10
-                        CheckMinMax = dataArray_predict.map(item => item.PM10)
+                        case "PM10": data_sensor = dataArray_predict[i].predict_pm10
+                        CheckMinMax = dataArray_predict.map(item => item.predict_pm10)
                             break;
-                        case "O3": data_sensor = dataArray_predict[i].Ozone
-                        CheckMinMax = dataArray_predict.map(item => item.Ozone)
+                        case "O3": data_sensor = dataArray_predict[i].predict_o3
+                        CheckMinMax = dataArray_predict.map(item => item.predict_o3)
                             break;
-                        case "CO": data_sensor = dataArray_predict[i].Carbon
-                        CheckMinMax = dataArray_predict.map(item => item.Carbon)
+                        case "CO": data_sensor = dataArray_predict[i].predict_co
+                        CheckMinMax = dataArray_predict.map(item => item.predict_co)
                             break;
-                        case "NO2": data_sensor = dataArray_predict[i].Nitro
-                        CheckMinMax = dataArray_predict.map(item => item.Nitro)
+                        case "NO2": data_sensor = dataArray_predict[i].predict_no2
+                        CheckMinMax = dataArray_predict.map(item => item.predict_no2)
                             break;
-                        case "SO2": data_sensor = dataArray_predict[i].Sulfur
-                        CheckMinMax = dataArray_predict.map(item => item.Sulfur)
+                        case "SO2": data_sensor = dataArray_predict[i].predict_so2
+                        CheckMinMax = dataArray_predict.map(item => item.predict_so2)
                             break;
                     }
                     if(data_sensor == Math.min(...CheckMinMax) && Math.min(...CheckMinMax) != Math.max(...CheckMinMax) && minValueExist == 0)
                     {
                         minValueExist = true;
                         chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("th-TH", 
-                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Bangkok'}), 
                          y: data_sensor,
                          markerType: "cross",
                          markerColor: "blue",
@@ -710,7 +717,7 @@ try
                     {
                         maxValueExist = true;
                         chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("th-TH", 
-                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Bangkok'}), 
                          y: data_sensor,
                          markerType: "cross",
                          markerColor: "red",
@@ -721,7 +728,7 @@ try
                     else
                     {
                         chart_predict.options.data[0].dataPoints.push({ label: new Date(dataArray_predict[i].timestamp).toLocaleString("th-TH", 
-                         { hour: 'numeric', minute: 'numeric', second: 'numeric',}), 
+                         { hour: 'numeric', minute: 'numeric', second: 'numeric',timeZone: 'Asia/Bangkok'}), 
                          y: data_sensor }); // เพิ่มจุดข้อมูลใหม่
                     }  
                 }
@@ -737,33 +744,65 @@ try
     function updateTime() 
     {
         let now = new Date();
-        document.getElementById("currentTime").textContent = now.toLocaleString("en-CA", {
-        weekday: 'long', month: 'long', day: 'numeric', year: "numeric" , hour: '2-digit', minute: '2-digit', second: '2-digit'
+        document.getElementById("currentTime").textContent = now.toLocaleString("en-US", {
+        weekday: 'long', month: 'long', day: 'numeric', year: "numeric" , hour: '2-digit', minute: '2-digit', second: '2-digit',
+        timeZone: 'Asia/Bangkok'
         });
     }
     function updateDateTime_forecase() ////////// Edit Here forecast //////////////////
     {
-        let now = new Date();
-        now.setHours(now.getHours() + 1);
-        document.getElementById("currentTime_forecast").textContent = now.toLocaleString("en-CA", {
-        weekday: 'long', month: 'long', day: 'numeric', year: "numeric" , hour: '2-digit', minute: '2-digit', second: '2-digit'
-        });  
-        // document.getElementById("TempMeesage_forecast").innerHTML = Temp_Current + " °C";
-        // document.getElementById("HumMeesage_forecast").innerHTML = Hum_Current + " %";    
-        // document.getElementById("PM2_5Meesage_forecast").innerHTML = "PM2.5 <br><br>" + PM2_5_Current + " µg/m³";
-        // document.getElementById("PM10Meesage_forecast").innerHTML = "PM10 <br><br>" + PM10_Current + " µg/m³";    
-        // document.getElementById("OzoneMessage_forecast").innerHTML = "O₃ <br><br>" + Ozone_Current + " mg/m³";
-        // document.getElementById("CarbonMessage_forecast").innerHTML = "CO <br><br>" + Carbon_Current + " mg/m³"; 
-        // document.getElementById("NitroMessage_forecast").innerHTML = "NO₂ <br><br>" + Nitro_Current + " µg/m³";
-        // document.getElementById("SulfurMessage_forecast").innerHTML = "SO₂ <br><br>" + Sulfur_Current + " µg/m³"; 
+        fetch('/getAlldata_predict', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ date : "" })  // ส่งข้อมูล date ในรูปแบบ JSON
+        })
+        .then(response => {
+        if (!response.ok) 
+        {
+            throw new Error('Network response was not ok');
+        }
+            return response.json();
+        })
+        .then(data => {
+            let temp_dataArray_predict = []
+            temp_dataArray_predict = JSON.parse(JSON.stringify(data));
+            Temp_Predict = temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_temp;
+            Hum_Predict = temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_hum;
+            PM2_5_Predict = temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_hum;
+            PM10_Predict = temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_pm10;
+            Carbon_Predict = temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_co;
+            Ozone_Predict = temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_o3;
+            Nitro_Predict = temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_no2;
+            Sulfur_Predict = temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_so2;
+            aqiPredict_Value = Math.floor(temp_dataArray_predict[temp_dataArray_predict.length - 1].predict_aqi);
+            Aqi_Predict_Check();
+            const isoString = temp_dataArray_predict[temp_dataArray_predict.length - 1].timestamp;
+            const dateObj = new Date(isoString);
 
+            const formatted = dateObj.toLocaleString("en-US", {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: "numeric",
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'Asia/Bangkok' // เพิ่มถ้าต้องการเวลาตาม UTC
+            });
+            document.getElementById("currentTime_forecast").textContent = formatted;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }   
     function updateEveryHour() 
     {
         updateTime();
         updateDateTime_forecase();
         setInterval(updateTime, 1000);
-        setInterval(updateDateTime_forecase, 3600000); // Update every 1 hour (3600000 ms)
+        setInterval(updateDateTime_forecase, 20000); // Update every 1 hour (3600000 ms)
     }        
     var broker = {
         hostname: "broker.emqx.io",
@@ -839,6 +878,12 @@ try
             Sulfur_Current = message.payloadString;
             document.getElementById("SulfurMessage").innerHTML = Sulfur_Current + " µg/m³";
         }
+        else if(message.destinationName == "IQA_Test/AQI_MinuteAvg")
+        {
+            //console.log(message.payloadString);
+            aqiValue = message.payloadString;
+            Aqi_Check();
+        }
     }
 
         // Set callback functions
@@ -859,131 +904,137 @@ try
     updateEveryHour();
     /////////////////////////// Actual //////////////////////
     
-    let maxAqi = 320;
-    const marker = document.getElementById('aqi-marker');
-    const containerWidth = document.querySelector('.aqi-bar').offsetWidth;
+    function Aqi_Check()
+    {
+        const marker = document.getElementById('aqi-marker');
+        const containerWidth = document.querySelector('.aqi-bar').offsetWidth;
 
-    const markerPosition = (aqiValue / maxAqi) * containerWidth;
-    marker.style.left = `${markerPosition}px`;
-    
-    if(aqiValue >= 0 && aqiValue <= 50) // สีเขียว
-    {
-        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Good");
-        document.querySelector(".status-box").style.color = "lawngreen";
-        document.querySelectorAll(".aqi-value").forEach(el => {
-            el.textContent = aqiValue;
-            el.style.color = "lawngreen"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
+        const markerPosition = (aqiValue / maxAqi) * containerWidth;
+        marker.style.left = `${markerPosition}px`;
+        
+        if(aqiValue >= 0 && aqiValue <= 50) // สีเขียว
+        {
+            document.querySelectorAll(".status-box").forEach(el => el.textContent = "Good");
+            document.querySelector(".status-box").style.color = "lawngreen";
+            document.querySelectorAll(".aqi-value").forEach(el => {
+                el.textContent = aqiValue;
+                el.style.color = "lawngreen"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else if(aqiValue >= 51 && aqiValue <= 100) // สีเหลือง
+        {
+            document.querySelectorAll(".status-box").forEach(el => el.textContent = "Moderate");
+            document.querySelector(".status-box").style.color = "yellow";
+            document.querySelectorAll(".aqi-value").forEach(el => {
+                el.textContent = aqiValue;
+                el.style.color = "yellow"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else if(aqiValue >= 100 && aqiValue <= 150) // สีส้ม
+        {
+            document.querySelectorAll(".status-box").forEach(el => el.textContent = "Poor");
+            document.querySelector(".status-box").style.color = "orange";
+            document.querySelectorAll(".aqi-value").forEach(el => {
+                el.textContent = aqiValue;
+                el.style.color = "orange"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else if(aqiValue >= 151 && aqiValue <= 200) // สีแดง
+        {
+            document.querySelectorAll(".status-box").forEach(el => el.textContent = "Unhealthy");
+            document.querySelector(".status-box").style.color = "red";
+            document.querySelectorAll(".aqi-value").forEach(el => {
+                el.textContent = aqiValue;
+                el.style.color = "red"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else if(aqiValue >= 201 && aqiValue <= 300) // สีม่วง
+        {
+            document.querySelectorAll(".status-box").forEach(el => el.textContent = "Servere");
+            document.querySelector(".status-box").style.color = "purple";
+            document.querySelectorAll(".aqi-value").forEach(el => {
+                el.textContent = aqiValue;
+                el.style.color = "purple"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else // สีน้ำตาล
+        {
+            document.querySelectorAll(".status-box").forEach(el => el.textContent = "Hazardous");
+            document.querySelector(".status-box").style.color = "brown";
+            document.querySelectorAll(".aqi-value").forEach(el => {
+                el.textContent = aqiValue;
+                el.style.color = "brown"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
     }
-    else if(aqiValue >= 51 && aqiValue <= 100) // สีเหลือง
-    {
-        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Moderate");
-        document.querySelector(".status-box").style.color = "yellow";
-        document.querySelectorAll(".aqi-value").forEach(el => {
-            el.textContent = aqiValue;
-            el.style.color = "yellow"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else if(aqiValue >= 100 && aqiValue <= 150) // สีส้ม
-    {
-        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Poor");
-        document.querySelector(".status-box").style.color = "orange";
-        document.querySelectorAll(".aqi-value").forEach(el => {
-            el.textContent = aqiValue;
-            el.style.color = "orange"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else if(aqiValue >= 151 && aqiValue <= 200) // สีแดง
-    {
-        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Unhealthy");
-        document.querySelector(".status-box").style.color = "red";
-        document.querySelectorAll(".aqi-value").forEach(el => {
-            el.textContent = aqiValue;
-            el.style.color = "red"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else if(aqiValue >= 201 && aqiValue <= 300) // สีม่วง
-    {
-        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Servere");
-        document.querySelector(".status-box").style.color = "purple";
-        document.querySelectorAll(".aqi-value").forEach(el => {
-            el.textContent = aqiValue;
-            el.style.color = "purple"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else // สีน้ำตาล
-    {
-        document.querySelectorAll(".status-box").forEach(el => el.textContent = "Hazardous");
-        document.querySelector(".status-box").style.color = "brown";
-        document.querySelectorAll(".aqi-value").forEach(el => {
-            el.textContent = aqiValue;
-            el.style.color = "brown"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
+    Aqi_Check();
     /////////////////////////////////////////////////////////
     /////////////////////////// Prediction //////////////////////
-    
-    let maxAqi_Predict = 320;
-    const marker_Predict = document.getElementById('aqi-marker_Predict');
-    const containerWidth_Predict = document.querySelector('.aqi-bar').offsetWidth;
+    function Aqi_Predict_Check()
+    {
+        const marker_Predict = document.getElementById('aqi-marker_Predict');
+        const containerWidth_Predict = document.querySelector('.aqi-bar').offsetWidth;
 
-    const markerPosition_Predict = (aqiPredict_Value / maxAqi_Predict) * containerWidth_Predict;
-    marker_Predict.style.left = `${markerPosition_Predict}px`;
+        const markerPosition_Predict = (aqiPredict_Value / maxAqi_Predict) * containerWidth_Predict;
+        marker_Predict.style.left = `${markerPosition_Predict}px`;
 
+        
+        if(aqiPredict_Value >= 0 && aqiPredict_Value <= 50) // สีเขียว
+        {
+            document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Good");
+            document.querySelector(".status-box_predict").style.color = "lawngreen";
+            document.querySelectorAll(".aqi-value_predict").forEach(el => {
+                el.textContent = aqiPredict_Value;
+                el.style.color = "lawngreen"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else if(aqiPredict_Value >= 51 && aqiPredict_Value <= 100) // สีเหลือง
+        {
+            document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Moderate");
+            document.querySelector(".status-box_predict").style.color = "yellow";
+            document.querySelectorAll(".aqi-value_predict").forEach(el => {
+                el.textContent = aqiPredict_Value;
+                el.style.color = "yellow"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else if(aqiPredict_Value >= 100 && aqiPredict_Value <= 150) // สีส้ม
+        {
+            document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Poor");
+            document.querySelector(".status-box_predict").style.color = "orange";
+            document.querySelectorAll(".aqi-value_predict").forEach(el => {
+                el.textContent = aqiPredict_Value;
+                el.style.color = "orange"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else if(aqiPredict_Value >= 151 && aqiPredict_Value <= 200) // สีแดง
+        {
+            document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Unhealthy");
+            document.querySelector(".status-box_predict").style.color = "red";
+            document.querySelectorAll(".aqi-value_predict").forEach(el => {
+                el.textContent = aqiPredict_Value;
+                el.style.color = "red"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else if(aqiPredict_Value >= 201 && aqiPredict_Value <= 300) // สีม่วง
+        {
+            document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Servere");
+            document.querySelector(".status-box_predict").style.color = "purple";
+            document.querySelectorAll(".aqi-value_predict").forEach(el => {
+                el.textContent = aqiPredict_Value;
+                el.style.color = "purple"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+        else // สีน้ำตาล
+        {
+            document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Hazardous");
+            document.querySelector(".status-box_predict").style.color = "brown";
+            document.querySelectorAll(".aqi-value_predict").forEach(el => {
+                el.textContent = aqiPredict_Value;
+                el.style.color = "brown"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
+            });
+        }
+    }
     
-    if(aqiPredict_Value >= 0 && aqiPredict_Value <= 50) // สีเขียว
-    {
-        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Good");
-        document.querySelector(".status-box_predict").style.color = "lawngreen";
-        document.querySelectorAll(".aqi-value_predict").forEach(el => {
-            el.textContent = aqiPredict_Value;
-            el.style.color = "lawngreen"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else if(aqiPredict_Value >= 51 && aqiPredict_Value <= 100) // สีเหลือง
-    {
-        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Moderate");
-        document.querySelector(".status-box_predict").style.color = "yellow";
-        document.querySelectorAll(".aqi-value_predict").forEach(el => {
-            el.textContent = aqiPredict_Value;
-            el.style.color = "yellow"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else if(aqiPredict_Value >= 100 && aqiPredict_Value <= 150) // สีส้ม
-    {
-        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Poor");
-        document.querySelector(".status-box_predict").style.color = "orange";
-        document.querySelectorAll(".aqi-value_predict").forEach(el => {
-            el.textContent = aqiPredict_Value;
-            el.style.color = "orange"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else if(aqiPredict_Value >= 151 && aqiPredict_Value <= 200) // สีแดง
-    {
-        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Unhealthy");
-        document.querySelector(".status-box_predict").style.color = "red";
-        document.querySelectorAll(".aqi-value_predict").forEach(el => {
-            el.textContent = aqiPredict_Value;
-            el.style.color = "red"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else if(aqiPredict_Value >= 201 && aqiPredict_Value <= 300) // สีม่วง
-    {
-        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Servere");
-        document.querySelector(".status-box_predict").style.color = "purple";
-        document.querySelectorAll(".aqi-value_predict").forEach(el => {
-            el.textContent = aqiPredict_Value;
-            el.style.color = "purple"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
-    else // สีน้ำตาล
-    {
-        document.querySelectorAll(".status-box_predict").forEach(el => el.textContent = "Hazardous");
-        document.querySelector(".status-box_predict").style.color = "brown";
-        document.querySelectorAll(".aqi-value_predict").forEach(el => {
-            el.textContent = aqiPredict_Value;
-            el.style.color = "brown"; // เปลี่ยนเป็นสีที่ต้องการ เช่น "green", "blue", "#ff6600"
-        });
-    }
+    
     /////////////////////////////////////////////////////////
 </script>

@@ -2,9 +2,9 @@ const knex = require('knex')({
     client: 'mysql',
     connection: {
       host: 'sql12.freesqldatabase.com',
-      user: 'sql12770355',
-      password: 'iBUmANq3Ms',
-      database: 'sql12770355'
+      user: 'sql12774523',
+      password: 'pQQXJPx74e',
+      database: 'sql12774523'
     }
   });
   
