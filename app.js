@@ -85,7 +85,7 @@ app.post('/insert_data', async (req, res) => {
 app.post('/insert_data_predict', async (req, res) => {
   try {
     const { predict_pm25,predict_pm10,predict_no2,predict_co,predict_so2,predict_o3,predict_aqi,predict_temp,predict_hum } = req.body; // รับค่าจาก Body
-    const result = await knex('sensor_data').insert({
+    const result = await knex('data_predict').insert({
       predict_pm25: parseFloat(predict_pm25),
       predict_pm10: parseFloat(predict_pm10),
       predict_no2: parseFloat(predict_no2),
