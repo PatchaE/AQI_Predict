@@ -63,10 +63,9 @@ app.post('/data_predict', async (req, res) => {
 });
 app.post('/insert_data', async (req, res) => {
   try {
-      const { timestamp,temp,hum,pm2_5,pm10,ozone,carbon,nitro,sulfur,people_no } = req.body; // รับค่าจาก Body
+      const { temp,hum,pm2_5,pm10,ozone,carbon,nitro,sulfur,people_no } = req.body; // รับค่าจาก Body
       console.log(req.body);
       const result = await knex('sensor_data').insert({
-        timestamp : timestamp,
         temp: parseFloat(temp),
         hum: parseFloat(hum),
         pm2_5: parseFloat(pm2_5),
