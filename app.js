@@ -64,17 +64,16 @@ app.post('/data_predict', async (req, res) => {
 app.post('/insert_data', async (req, res) => {
   try {
       const { temp,hum,pm2_5,pm10,ozone,carbon,nitro,sulfur,people_no } = req.body; // รับค่าจาก Body
-      console.log(req.body);
       const result = await knex('sensor_data').insert({
-        temp: parseFloat(temp),
-        hum: parseFloat(hum),
-        pm2_5: parseFloat(pm2_5),
-        pm10: parseFloat(pm10),
-        ozone: parseFloat(ozone),
-        carbon: parseFloat(carbon),
-        nitro: parseFloat(nitro),
-        sulfur: parseFloat(sulfur),
-        people_no: Number(people_no),
+        temp: temp,
+        hum: hum,
+        pm2_5: pm2_5,
+        pm10: pm10,
+        ozone: ozone,
+        carbon: carbon,
+        nitro: nitro,
+        sulfur: sulfur,
+        people_no: people_no,
       });
       //res.set('Content-Type', 'application/json');
       res.json('Insert Success, ID:', result[0]);  // ส่งผลลัพธ์ไปยัง client
@@ -88,15 +87,15 @@ app.post('/insert_data_predict', async (req, res) => {
     const { timestamp,predict_pm25,predict_pm10,predict_no2,predict_co,predict_so2,predict_o3,predict_aqi,predict_temp,predict_hum } = req.body; // รับค่าจาก Body
     const result = await knex('data_predict').insert({
       timestamp : timestamp,
-      predict_pm25: parseFloat(predict_pm25),
-      predict_pm10: parseFloat(predict_pm10),
-      predict_no2: parseFloat(predict_no2),
-      predict_co: parseFloat(predict_co),
-      predict_so2: parseFloat(predict_so2),
-      predict_o3: parseFloat(predict_o3),
-      predict_aqi: parseFloat(predict_aqi),
-      predict_temp: parseFloat(predict_temp),
-      predict_hum: parseFloat(predict_hum),
+      predict_pm25: predict_pm25,
+      predict_pm10: predict_pm10,
+      predict_no2: predict_no2,
+      predict_co: predict_co,
+      predict_so2: predict_so2,
+      predict_o3: predict_o3,
+      predict_aqi: predict_aqi,
+      predict_temp: predict_temp,
+      predict_hum: predict_hum,
     });
     //res.set('Content-Type', 'application/json');
     res.json('Insert Success, ID:', result[0]);  // ส่งผลลัพธ์ไปยัง client
