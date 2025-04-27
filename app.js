@@ -77,6 +77,7 @@ app.post('/insert_data', async (req, res) => {
         sulfur: sulfur,
         people_no: people_no,
       });
+      console.log('Insert สำเร็จ', result); // ถ้าสำเร็จ result จะมีค่า id
       //res.set('Content-Type', 'application/json');
       //res.json('Insert Success, ID:', result[0]);  // ส่งผลลัพธ์ไปยัง client
       res.status(201).json({ message: 'Data saved successfully' });
@@ -100,6 +101,7 @@ app.post('/insert_data_predict', async (req, res) => {
       predict_temp: predict_temp,
       predict_hum: predict_hum,
     });
+    console.log('Insert สำเร็จ', result); // ถ้าสำเร็จ result จะมีค่า id
     //res.set('Content-Type', 'application/json');
     res.status(201).json({ message: 'Data saved successfully' });
 } catch (error) {

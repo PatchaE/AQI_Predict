@@ -229,10 +229,15 @@ $("#datetimepicker").datetimepicker({
     ////////////////////////////////////////////////
     onSelectDate:function(ct,$i){
         ////////// Data base Return dataPoints //////////////
-        datepick = new Date(ct).toLocaleDateString('en-CA');
-        datepick = new Date(datepick).toISOString().split('T')[0];
-        //console.log(datepick);  
-        let date = datepick; // แปลงเป็น ปี-เดือน-วัน
+        datepick = new Date(ct).toLocaleDateString('en-US');
+        datepick = new Date(datepick);
+        const year = datepick.getFullYear();
+        const month = String(datepick.getMonth() + 1).padStart(2, '0');
+        const day = String(datepick.getDate()).padStart(2, '0');
+
+        const formatted = `${year}-${month}-${day}`;
+
+        let date = formatted; // แปลงเป็น ปี-เดือน-วัน
         document.querySelector("select[name=simple]").value = "";
         chart.options.data[0].dataPoints = [];
 
@@ -252,8 +257,9 @@ $("#datetimepicker").datetimepicker({
         })
         .then(data => {
             // แสดงข้อมูลใน console ในรูปแบบที่อ่านง่าย
-            //console.log('Response Data:', JSON.stringify(data));
+            
             dataArray = JSON.parse(JSON.stringify(data));
+            console.log(dataArray);
         })
         .catch(error => {
             console.error('Error:', error);
