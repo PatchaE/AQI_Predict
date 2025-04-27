@@ -63,8 +63,10 @@ app.post('/data_predict', async (req, res) => {
 });
 app.post('/insert_data', async (req, res) => {
   try {
-      const { temp,hum,pm2_5,pm10,ozone,carbon,nitro,sulfur,people_no } = req.body; // รับค่าจาก Body
+      const { timestamp,temp,hum,pm2_5,pm10,ozone,carbon,nitro,sulfur,people_no } = req.body; // รับค่าจาก Body
+      //console.log(req.body);
       const result = await knex('sensor_data').insert({
+        timestamp,
         temp: temp,
         hum: hum,
         pm2_5: pm2_5,
@@ -76,7 +78,8 @@ app.post('/insert_data', async (req, res) => {
         people_no: people_no,
       });
       //res.set('Content-Type', 'application/json');
-      res.json('Insert Success, ID:', result[0]);  // ส่งผลลัพธ์ไปยัง client
+      //res.json('Insert Success, ID:', result[0]);  // ส่งผลลัพธ์ไปยัง client
+      res.status(201).json({ message: 'Data saved successfully' });
   } catch (error) {
       console.error('Error:', error);  // แสดงข้อผิดพลาดในคอนโซลของเซิร์ฟเวอร์
       res.status(500).json({ error: error.message });
@@ -98,7 +101,7 @@ app.post('/insert_data_predict', async (req, res) => {
       predict_hum: predict_hum,
     });
     //res.set('Content-Type', 'application/json');
-    res.json('Insert Success, ID:', result[0]);  // ส่งผลลัพธ์ไปยัง client
+    res.status(201).json({ message: 'Data saved successfully' });
 } catch (error) {
     console.error('Error:', error);  // แสดงข้อผิดพลาดในคอนโซลของเซิร์ฟเวอร์
     res.status(500).json({ error: error.message });
