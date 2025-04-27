@@ -240,7 +240,7 @@ $("#datetimepicker").datetimepicker({
         let date = formatted; // แปลงเป็น ปี-เดือน-วัน
         document.querySelector("select[name=simple]").value = "";
         chart.options.data[0].dataPoints = [];
-
+        console.log(date);
         fetch('/data', {
         method: 'POST',
         headers: {

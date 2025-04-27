@@ -37,9 +37,8 @@ app.post('/data', async (req, res) => {
     try {
         
         const { date } = req.body; // รับค่าจาก Body
-        const result = await knex.select('*')
-        .from('sensor_data')
-        .whereRaw('DATE(`timestamp`) = ?', [date]);
+        const result = await knex('sensor_data')
+        .whereRaw('DATE(`timestamp`) = DATE(?)', [date]);
         
         res.set('Content-Type', 'application/json');
         res.json(result);  // ส่งผลลัพธ์ไปยัง client
@@ -51,8 +50,8 @@ app.post('/data', async (req, res) => {
 app.post('/data_predict', async (req, res) => {
   try {
       const { date } = req.body; // รับค่าจาก Body
-      const result = await knex.select('*').from('data_predict')
-      .where(knex.raw('DATE(timestamp) = ?', date));
+      const result = await knex('data_predict')
+        .whereRaw('DATE(`timestamp`) = DATE(?)', [date]);
       
       res.set('Content-Type', 'application/json');
       res.json(result);  // ส่งผลลัพธ์ไปยัง client
